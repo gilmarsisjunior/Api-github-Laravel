@@ -21,12 +21,17 @@ class ApiController extends Controller
         CURLOPT_USERAGENT=> 1
         ]);
         // Envio e armazenamento da resposta
-        $response = json_decode(curl_exec($curl)) ;
+        $response = json_decode(curl_exec($curl));
 
+        $convertedToArray = get_object_vars($response);
+        if(count($convertedToArray) <10 ){
+            echo "Usuário incorreto, tente novamente em 3...";
+            header( "refresh:3;url=http://127.0.0.1:8000" );
+            return ;
+
+        }
 
         //Testa e trata um possível erro
-        if(!$response->message)
-        {
         $login = $response->login;
         $id = $response->id;
         $email = $response->email ?? 'Este email não está disponível';
@@ -37,8 +42,6 @@ class ApiController extends Controller
                                             'id'=> $id,
                                             'email'=>$email,
                                             'name'=>$name]);       
-        }
-        else echo 'Usuário não encontrado, redirecionando em 3... ';
-        header( "refresh:3; url=http://127.0.0.1:8000/" );
+        
     }
 }
